@@ -37,27 +37,19 @@ const tasks = [
     return acc;
   }, {});
 
-  // Elements UI
   const listContainer = document.querySelector(
     ".tasks-list-section .list-group"
   );
 
-  function renderAllTasks(tasksList) {
-    if (!tasksList) {
-      console.log("Передайте список задач");
-      return;
-    }
-    const fragment = document.createDocumentFragment();
-    Object.values(tasksList).forEach((task) => {
-      const li = listItemTemplate(task);
-      fragment.appendChild(li);
-    });
-    listContainer.appendChild(fragment);
-  }
+  const form = document.forms["addTask"];
+  form.addEventListener('submit', onFormSubmitHandler);
+
+  const inputTitle = form.elements['title'];
+  const inputBody = form.elements['body'];
 
   renderAllTasks(objOfTasks);
 
-  function listItemTemplate({ _id, title, body } = {}) {
+  function listItemTemplate({ title, body } = {}) {
     const li = document.createElement("li");
     li.classList.add(
       "list-group-item",
@@ -84,5 +76,46 @@ const tasks = [
     li.appendChild(article);
 
     return li;
+  }
+
+  function renderAllTasks(tasksList) {
+    if (!tasksList) {
+      console.log("Передайте список задач");
+      return;
+    }
+    const fragment = document.createDocumentFragment();
+    Object.values(tasksList).forEach((task) => {
+      const li = listItemTemplate(task);
+      fragment.appendChild(li);
+    });
+    listContainer.appendChild(fragment);
+  }
+
+  function onFormSubmitHandler(e) {
+    e.preventDefault();
+    const titleValue = inputTitle.value.trim();
+    const bodyValue = inputBody.value.trim();
+
+    if(!titleValue || !bodyValue) {
+      alert('Пожалуйста, введите title и body');
+      return;
+    }
+
+    const task = createNewTask(titleValue, bodyValue);
+    const listItem = listItemTemplate(task);
+    listContainer.insertAdjacentElement('afterbegin', listItem);
+    form.reset();
+  }
+
+  function createNewTask(title, body) {
+    const newTask = {
+      title,
+      body,
+      completed: false,
+      _id: `task-${Math.random()}`
+    };
+
+    objOfTasks[newTask._id] = newTask;
+    return {...newTask};
   }
 })(tasks);
