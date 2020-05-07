@@ -222,6 +222,7 @@ const tasks = [
       return;
     };
     setTheme(selectedTheme);
+    lastSelectedTheme = selectedTheme;
   }
   function setTheme(name) {
    const selectedThemeObj = themes[name];
